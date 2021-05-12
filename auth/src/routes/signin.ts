@@ -3,16 +3,15 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { BadRequestError, Routes, validateRequest } from '../common';
 import { User } from '../models/user';
+import { PasswordManager } from '../services/password-manager';
 
 const router = express.Router();
 
 router.post(
-  Routes.signup,
+  Routes.signin,
   [
     body('email').isEmail().withMessage('Email must be valid'),
-    body('password')
-      .isLength({ min: 4, max: 20 })
-      .withMessage('Password must be between 4 and 20 characters'),
+    body('password').notEmpty().withMessage('You must supply a password'),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -20,24 +19,30 @@ router.post(
 
     const existingUser = await User.findOne({ email }).exec();
 
-    if (existingUser) {
-      throw new BadRequestError('Email in use');
+    if (!existingUser) {
+      throw new BadRequestError('Invalid credentials');
     }
 
-    const user = User.build({ email, password });
-    await user.save();
+    const passwordsMatch = await PasswordManager.compare(
+      existingUser.password,
+      password,
+    );
+
+    if (!passwordsMatch) {
+      throw new BadRequestError('Invalid credentials');
+    }
 
     // Generate JWT
     const userJwt = jwt.sign({
-      id: user.id,
-      email: user.email,
+      id: existingUser.id,
+      email: existingUser.email,
     }, process.env.JWT_KEY!);
 
     // Store it on session object
     req.session = { jwt: userJwt };
 
-    res.status(201).send(user);
+    res.status(201).send(existingUser);
   },
 );
 
-export { router as signupRouter };
+export { router as signinRouter };
