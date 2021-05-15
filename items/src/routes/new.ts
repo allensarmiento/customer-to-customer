@@ -1,7 +1,15 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { requireAuth, Routes, validateRequest } from '../common';
+import {
+  requireAuth,
+  Routes,
+  validateRequest,
+} from '../common';
+import {
+  ItemCreatedPublisher,
+} from '../events/publishers/item-created-publisher';
 import { Item } from '../models/item';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -25,6 +33,14 @@ router.post(
     });
 
     await item.save();
+
+    await new ItemCreatedPublisher(natsWrapper.client).publish({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      userId: item.userId,
+      version: item.version,
+    });
 
     res.status(201).send(item);
   },

@@ -8,7 +8,11 @@ import {
   Routes,
   validateRequest,
 } from '../common';
+import {
+  ItemUpdatedPublisher,
+} from '../events/publishers/item-updated-publisher';
 import { Item } from '../models/item';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -46,6 +50,16 @@ router.put(
     });
 
     await item.save();
+
+    // Not using await because it isn't necessary for the user to know the
+    // event is published successfully.
+    new ItemUpdatedPublisher(natsWrapper.client).publish({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      userId: item.userId,
+      version: item.version,
+    });
 
     res.send(item);
   },

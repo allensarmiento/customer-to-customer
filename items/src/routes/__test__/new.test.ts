@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Routes } from '../../common';
 import { Item } from '../../models/item';
+import { natsWrapper } from '../../nats-wrapper';
 
 it(
   `has a route handler listening to ${Routes.items} for post requests`,
@@ -86,4 +87,16 @@ it('creates an item with valid inputs', async () => {
   expect(items.length).toEqual(1);
   expect(items[0].price).toEqual(price);
   expect(items[0].title).toEqual(title);
+});
+
+it('publishes an event', async () => {
+  const title = 'aoeuahtns';
+
+  await request(app)
+    .post(Routes.items)
+    .set('Cookie', global.signin())
+    .send({ title, price: 30 })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Routes } from '../../common';
 import { Item } from '../../models/item';
+import { natsWrapper } from '../../nats-wrapper';
 import { generateId } from '../../utilities/generate-id';
 
 it(
@@ -122,4 +123,52 @@ it('updates the item provided valid inputs', async () => {
 
   expect(itemResponse.body.title).toEqual('new title');
   expect(itemResponse.body.price).toEqual(50);
+});
+
+it('publishes an event', async () => {
+  const cookie = global.signin();
+
+  const response = await request(app)
+    .post(Routes.items)
+    .set('Cookie', cookie)
+    .send({
+      title: 'aoeuhts',
+      price: 30,
+    });
+
+  await request(app)
+    .put(`${Routes.items}/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'new title',
+      price: 50,
+    })
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it('rejects updates if the item is reserved', async () => {
+  const cookie = global.signin();
+
+  const response = await request(app)
+    .post(Routes.items)
+    .set('Cookie', cookie)
+    .send({
+      title: 'aoeuhts',
+      price: 30,
+    });
+
+  const item = await Item.findById(response.body.id);
+  item!.set({ orderId: generateId() });
+  await item!.save();
+
+  await request(app)
+    .put(`${Routes.items}/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'new title',
+      price: 50,
+    })
+    .expect(400);
 });
