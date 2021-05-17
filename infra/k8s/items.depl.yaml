@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: items-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: items
+  template:
+    metadata:
+      labels:
+        app: items
+    spec:
+      containers:
+        - name: items
+          image: allensarmiento/items
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: MONGO_URI
+              value: 'mongodb://items-mongo-srv:27017/items'
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_CLUSTER_ID
+              value: customertocustomer
+            - name: NATS_URL
+              value: 'https://nats-srv:4222'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: items-srv
+spec:
+  selector:
+    app: items
+  ports:
+    - name: items
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

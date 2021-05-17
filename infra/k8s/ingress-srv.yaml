@@ -17,3 +17,10 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /api/items/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: items-srv
+                port:
+                  number: 3000
