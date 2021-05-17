@@ -1,8 +1,8 @@
 import request from 'supertest';
-import mongoose from 'mongoose';
 import { app } from '../../app';
 import { Routes } from '../../common';
 import { Item } from '../../models/item';
+import { generateId } from '../../utilities/generate-id';
 
 it(
   `has a route handler listening on ${Routes.orders}/:orderId for get requests`,
@@ -24,7 +24,7 @@ it(
   'returns a status 401 if a user tries to fetch another user\'s order',
   async () => {
     const item = Item.build({
-      id: mongoose.Types.ObjectId().toHexString(),
+      id: generateId(),
       title: 'Art piece',
       price: 30,
     });
@@ -48,7 +48,7 @@ it(
 
 it('fetches the order if it exists and belongs to the user', async () => {
   const item = Item.build({
-    id: mongoose.Types.ObjectId().toHexString(),
+    id: generateId(),
     title: 'Art piece',
     price: 30,
   });

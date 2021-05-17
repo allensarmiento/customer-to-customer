@@ -1,13 +1,12 @@
 import request from 'supertest';
-import mongoose from 'mongoose';
 import { app } from '../../app';
 import { Routes } from '../../common';
 import { Item } from '../../models/item';
-import { Order } from '../../models/order';
+import { generateId } from '../../utilities/generate-id';
 
 const buildItem = async () => {
   const item = Item.build({
-    id: mongoose.Types.ObjectId().toHexString(),
+    id: generateId(),
     title: 'Art piece',
     price: 30,
   });

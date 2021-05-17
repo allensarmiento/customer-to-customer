@@ -5,6 +5,7 @@ import { Routes } from '../../common';
 import { Item } from '../../models/item';
 import { Order, OrderStatus } from '../../models/order';
 import { natsWrapper } from '../../nats-wrapper';
+import { generateId } from '../../utilities/generate-id';
 
 it(
   `has a route handler listening on ${Routes.orders} for post requests`,
@@ -29,7 +30,7 @@ it('returns a status 404 if the item does not exist', async () => {
 
 it('returns a status 400 if the item is already reserved', async () => {
   const item = Item.build({
-    id: mongoose.Types.ObjectId().toHexString(),
+    id: generateId(),
     title: 'Art piece',
     price: 30,
   });
@@ -52,7 +53,7 @@ it('returns a status 400 if the item is already reserved', async () => {
 
 it('reserves a ticket', async () => {
   const item = Item.build({
-    id: mongoose.Types.ObjectId().toHexString(),
+    id: generateId(),
     title: 'Art piece',
     price: 30,
   });
@@ -67,7 +68,7 @@ it('reserves a ticket', async () => {
 
 it('emits an order created event', async () => {
   const item = Item.build({
-    id: mongoose.Types.ObjectId().toHexString(),
+    id: generateId(),
     title: 'Art piece',
     price: 30,
   });
