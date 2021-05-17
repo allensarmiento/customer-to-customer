@@ -5,6 +5,7 @@ import cookieSession from 'cookie-session';
 import { currentUser, errorHandler, NotFoundError } from './common';
 import { indexOrderRouter } from './routes/index';
 import { newOrderRouter } from './routes/new';
+import { showOrderRouter } from './routes/show';
 
 const app = express();
 app.set('trust proxy',true);
@@ -19,6 +20,7 @@ app.use(currentUser);
 
 app.use(indexOrderRouter);
 app.use(newOrderRouter);
+app.use(showOrderRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();
