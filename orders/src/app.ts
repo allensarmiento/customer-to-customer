@@ -3,6 +3,7 @@ import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import { currentUser, errorHandler, NotFoundError } from './common';
+import { cancelOrderRouter } from './routes/cancel';
 import { indexOrderRouter } from './routes/index';
 import { newOrderRouter } from './routes/new';
 import { showOrderRouter } from './routes/show';
@@ -18,6 +19,7 @@ app.use(
 );
 app.use(currentUser);
 
+app.use(cancelOrderRouter);
 app.use(indexOrderRouter);
 app.use(newOrderRouter);
 app.use(showOrderRouter);
