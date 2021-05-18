@@ -32,11 +32,11 @@ const start = async () => {
   }
 
   if (!process.env.EXPIRATION_WINDOW_SECONDS) {
-    throw new Error('EXPIRATION_WINDOWS_SECONDS must be defined');
+    throw new Error('EXPIRATION_WINDOW_SECONDS must be defined');
   }
 
   if (isNaN(Number(process.env.EXPIRATION_WINDOW_SECONDS))) {
-    throw new Error('EXPIRATION_WINDOWS_SECONDS is invalid');
+    throw new Error('EXPIRATION_WINDOW_SECOND is invalid');
   }
 
   try {
