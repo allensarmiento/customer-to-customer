@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
 import { natsWrapper } from './nats-wrapper';
 import { app } from './app';
+import {
+  ExpirationCompleteListener,
+} from './events/listeners/expiration-complete-listener';
+import { ItemCreatedListener } from './events/listeners/item-created-listener';
+import { ItemUpdatedListener } from './events/listeners/item-updated-listener';
+import {
+  PaymentCreatedListener,
+} from './events/listeners/payment-created-listener';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -45,6 +53,11 @@ const start = async () => {
 
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    new ExpirationCompleteListener(natsWrapper.client).listen();
+    new ItemCreatedListener(natsWrapper.client).listen();
+    new ItemUpdatedListener(natsWrapper.client).listen();
+    new PaymentCreatedListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
