@@ -1,4 +1,4 @@
-apiVersion: skaffold/v2beta1
+apiVersion: skaffold/v2alpha3
 kind: Config
 deploy:
   kubectl:
@@ -26,6 +26,14 @@ build:
             dest: .
     - image: allensarmiento/orders
       context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: allensarmiento/payments
+      context: payments
       docker:
         dockerfile: Dockerfile
       sync:
