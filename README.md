@@ -14,7 +14,7 @@ Customer-to-customer (C2C) transactions rely on a third party to facilitate tran
 
 ## Prerequisites
 
-Make sure to install the following:
+Have the following installed:
 
 - Node.js
 - Docker Desktop
@@ -23,7 +23,7 @@ Make sure to install the following:
   - Currently using the Docker Desktop steps. If you are using something different, you will have to look up the configuration.
 - Skaffold
 
-## How to Install
+## How to Setup
 
 The following secrets need to be created to run the application. Follow the instructions below with your own values:
 
@@ -43,6 +43,20 @@ In the client folder, create a `.env.local file` and fill in your publishable st
 
 ```
 NEXT_PUBLIC_PUBLISHABLE_STRIPE_KEY=<YOUR_PUBLISHABLE_STRIPE_KEY>
+```
+
+## How to Run
+
+Once you have gone through the prerequisites and setup, you can run the application with:
+
+```
+skaffold dev
+```
+
+In case of any cleanup failures when stopping the application, try executing the following:
+
+```
+skaffold delete
 ```
 
 ## Services
