@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const serverUrl = 'https://ingress-nginx-controller.ingress-nginx.svc.cluster.local'
+const serverUrl = 'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local';
 
 const browserUrl = '/';
 
