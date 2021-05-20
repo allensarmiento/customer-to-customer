@@ -25,6 +25,12 @@ Have the following installed:
 
 ## How to Setup
 
+Add the following to your `/etc/hosts/` file:
+
+```
+127.0.0.1 customertocustomer.dev
+```
+
 The following secrets need to be created to run the application. Follow the instructions below with your own values:
 
 Create a jwt secret:
