@@ -78,3 +78,4 @@ The payments service is responsible for handling payment transactions through St
   - Display if the user sold or bought the item
   - Have an amount info to sellers
   - Add images to items
+- Put expired orders back up for sale
